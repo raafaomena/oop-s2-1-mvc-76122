@@ -1,12 +1,6 @@
-﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore;
-
 namespace Library.MVC.Data;
 
-public class ApplicationDbContext : IdentityDbContext
+public class ApplicationDbContext
 {
-    public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
-        : base(options)
-    {
-    }
+    
 }
