@@ -1,59 +1,109 @@
 @model IEnumerable<Library.Domain.Book>
 
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Books";
 }
 
-<h1>Index</h1>
+<h1>Books</h1>
+
+<form method="get">
+
+    <p>
+
+        Search Title or Author:
+        <input type="text" name="searchString" />
+
+        Category:
+        <input type="text" name="categoryFilter" />
+
+        Availability:
+        <select name="availabilityFilter">
+
+            <option value="">All</option>
+            <option value="Available">Available</option>
+            <option value="OnLoan">On Loan</option>
+
+        </select>
+
+        <input type="submit" value="Filter" class="btn btn-primary" />
+
+    </p>
+
+</form>
 
 <p>
-    <a asp-action="Create">Create New</a>
+    <a asp-action="Create">Create New Book</a>
 </p>
+
 <table class="table">
+
     <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.Title)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Author)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Category)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Isbn)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.IsAvailable)
-            </th>
-            <th></th>
-        </tr>
+
+    <tr>
+
+        <th>
+            Title
+        </th>
+
+        <th>
+            Author
+        </th>
+
+        <th>
+            Category
+        </th>
+
+        <th>
+            ISBN
+        </th>
+
+        <th>
+            Available
+        </th>
+
+        <th></th>
+
+    </tr>
+
     </thead>
+
     <tbody>
-@foreach (var item in Model) {
+
+    @foreach (var item in Model)
+    {
         <tr>
+
             <td>
-                @Html.DisplayFor(modelItem => item.Title)
+                @item.Title
             </td>
+
             <td>
-                @Html.DisplayFor(modelItem => item.Author)
+                @item.Author
             </td>
+
             <td>
-                @Html.DisplayFor(modelItem => item.Category)
+                @item.Category
             </td>
+
             <td>
-                @Html.DisplayFor(modelItem => item.Isbn)
+                @item.Isbn
             </td>
+
             <td>
-                @Html.DisplayFor(modelItem => item.IsAvailable)
+                @item.IsAvailable
             </td>
+
             <td>
+
                 <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
                 <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
                 <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+
             </td>
+
         </tr>
-}
+    }
+
     </tbody>
+
 </table>

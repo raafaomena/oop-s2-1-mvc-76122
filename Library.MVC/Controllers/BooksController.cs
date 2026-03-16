@@ -3,10 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using Library.Domain;
 using Library.MVC.Data;
+using Library.Domain;
 
 namespace Library.MVC.Controllers
 {
@@ -20,9 +19,37 @@ namespace Library.MVC.Controllers
         }
 
         // GET: Books
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(string searchString, string categoryFilter, string availabilityFilter)
         {
-            return View(await _context.Books.ToListAsync());
+            var books = from b in _context.Books
+                        select b;
+
+            if (!String.IsNullOrEmpty(searchString))
+            {
+                books = books.Where(b =>
+                    b.Title.Contains(searchString) ||
+                    b.Author.Contains(searchString));
+            }
+
+            if (!String.IsNullOrEmpty(categoryFilter))
+            {
+                books = books.Where(b => b.Category == categoryFilter);
+            }
+
+            if (!String.IsNullOrEmpty(availabilityFilter))
+            {
+                if (availabilityFilter == "Available")
+                {
+                    books = books.Where(b => b.IsAvailable == true);
+                }
+
+                if (availabilityFilter == "OnLoan")
+                {
+                    books = books.Where(b => b.IsAvailable == false);
+                }
+            }
+
+            return View(await books.ToListAsync());
         }
 
         // GET: Books/Details/5
@@ -35,6 +62,7 @@ namespace Library.MVC.Controllers
 
             var book = await _context.Books
                 .FirstOrDefaultAsync(m => m.Id == id);
+
             if (book == null)
             {
                 return NotFound();
@@ -50,8 +78,6 @@ namespace Library.MVC.Controllers
         }
 
         // POST: Books/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Id,Title,Author,Category,Isbn,IsAvailable")] Book book)
@@ -74,16 +100,16 @@ namespace Library.MVC.Controllers
             }
 
             var book = await _context.Books.FindAsync(id);
+
             if (book == null)
             {
                 return NotFound();
             }
+
             return View(book);
         }
 
         // POST: Books/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("Id,Title,Author,Category,Isbn,IsAvailable")] Book book)
@@ -111,8 +137,10 @@ namespace Library.MVC.Controllers
                         throw;
                     }
                 }
+
                 return RedirectToAction(nameof(Index));
             }
+
             return View(book);
         }
 
@@ -126,6 +154,7 @@ namespace Library.MVC.Controllers
 
             var book = await _context.Books
                 .FirstOrDefaultAsync(m => m.Id == id);
+
             if (book == null)
             {
                 return NotFound();
@@ -140,12 +169,14 @@ namespace Library.MVC.Controllers
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var book = await _context.Books.FindAsync(id);
+
             if (book != null)
             {
                 _context.Books.Remove(book);
             }
 
             await _context.SaveChangesAsync();
+
             return RedirectToAction(nameof(Index));
         }
 
